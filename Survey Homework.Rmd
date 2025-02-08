@@ -1,0 +1,94 @@
+---
+title: "Survey - Nate"
+output: html_document
+date: "2025-02-08"
+---
+
+
+```{r}
+
+# Imported the CSV into RStudio but don't know how to read the data from the table itself 
+surveydata <- read.csv("C:/Users/woodb/Downloads/Typical_Employee_Survey_Data.csv", sep = ",", header = 0)
+
+#Putting names to the columns ("C") for easier readability
+names(surveydata) <- c("Age", "Gender", "Satisfaction", "Characteristic Wanted", "Years Worked", "Promotion Likelihood", "Important Decisions", "Budgeting Decisions", "Pride in Work", "Job Loyalty", "Workplace Relations")
+
+# Numerical Columns: Age, Years (Might be wrong, but the other ones are scales and don't go well with box plots / 5 number summaries)
+fivenum(surveydata$Age)
+boxplot.stats(surveydata$Age)
+fivenum(surveydata$`Years Worked`)
+boxplot.stats(surveydata$`Years Worked`)
+
+#Factorization of data that I'd want to visualize, as well as visualizations I think are appropriate
+surveydata$Gender <- factor(surveydata$Gender, levels=c(1,2), labels=c("Male", "Female"))
+GSlices <- table(surveydata$Gender)
+pie(GSlices, labels = names(GSlices))
+#This pie chart shows that there's a fairly even spread of male & female employees, but there's slightly more men
+#I chose a pie chart because it's much easier to view relativity with a pie chart compared to a bar plot
+
+surveydata$Satisfaction <- factor(surveydata$Satisfaction, levels=c(1:4), labels=c("Very Satisfied", "Moderately Satisfied", "A Little Dissatisfied", "Very Dissatisfied"))
+SatisTable <- table(surveydata$Satisfaction)
+barplot(SatisTable)
+# The Y axis is the count, showing that about 110 to 115 employees are at least moderately satisfied with work
+# I chose a bar plot because I wanted to see how many people were in each category on the linear scale instead of general percentage
+
+surveydata$`Characteristic Wanted` <- factor(surveydata$`Characteristic Wanted`, levels=c(1:5), labels=c("High Income", "No Danger of Being Fired", "Flexible Hours", "Opportunities for Advancement", "Enjoying The Work"))
+CharTable <- table(surveydata$`Characteristic Wanted`)
+pie(CharTable, labels = names(CharTable))
+# This pie chart shows that a majority of people value enjoyment, with the least valued thing being flexible hours. High income's also fairly prioritized
+# I chose a pie chart because the data isn't a linear scale, so using a bar plot wouldn't make sense
+
+
+surveydata$`Promotion Likelihood` <- factor(surveydata$`Promotion Likelihood`, levels=c(1:5), labels=c("Very Likely", "Likely", "Unsure", "Unlikely", "Very Unlikely"))
+PromTable <- table(surveydata$`Promotion Likelihood`)
+barplot(PromTable)
+# Most people are confident they won't get a promotion, but a slight minority are confident that they will.
+# I chose a bar plot because viewing the data parallel made it easier to see the similar quantity in likely / unlikely
+
+surveydata$`Important Decisions` <- factor(surveydata$`Important Decisions`, levels=c(1:4), labels=c("Always", "Much of the Time", "Sometimes", "Never"))
+DecisTable <- table(surveydata$`Important Decisions`)
+barplot(DecisTable)
+# Very few people never get to make important decisions, with a super-majority of people being able to make them at a semi-frequent basis.
+# I chose a bar plot because of the linear scale it was representing.
+
+
+surveydata$`Budgeting Decisions` <- factor(surveydata$`Budgeting Decisions`, levels=c(1, 2), labels=c("Yes", "No"))
+BudgetTable <- table(surveydata$`Budgeting Decisions`)
+pie(BudgetTable, labels = names(BudgetTable))
+# Slightly more than half of the people said yes, meaning that they had at least some level of input about what to do for the budget.
+# I chose a pie chart due to the binary nature of the data, not focusing on raw numbers but more %ages
+
+surveydata$`Pride in Work` <- factor(surveydata$`Pride in Work`, levels=c(1:4), labels=c("Very Proud", "Somewhat Proud", "Indifferent", "Not At All Proud"))
+PrideTable <- table(surveydata$`Pride in Work`)
+barplot(PrideTable)
+# An extreme minority of people aren't proud of their work, with most people being at least a little proud of their work.
+# I chose a bar plot because of the linear scale it was representing making it easier to read the data.
+
+surveydata$`Job Loyalty` <- factor(surveydata$`Job Loyalty`, levels=c(1:5), labels=c("Very Likely", "Likely", "Unsure", "Unlikely", "Very Unlikely"))
+LoyalTable <- table(surveydata$`Job Loyalty`)
+barplot(LoyalTable)
+# Job satisfaction appears to be a little acceptable, the majority of the answers being unlikely, though a surprising amount were likely to switch jobs. Very few people were unsure of what to do if given the opportunity.
+# I chose a bar plot because of the linear scale it was representing.
+
+surveydata$`Workplace Relations` <- factor(surveydata$`Workplace Relations`, levels=c(1:5), labels=c("Very Good", "Good", "So-So", "Bad", "Very Bad"))
+RelationTable <- table(surveydata$`Workplace Relations`)
+barplot(RelationTable)
+# Workplace relations are trending to be extremely positive, with about 80% of people saying that the workplace relations were good or very good.
+# I chose a bar plot because of the linear scale it was representing.
+
+
+
+# Relationship Scatter Plots
+# First: Employee Loyalty and Pride in Work
+plot(x = as.numeric(surveydata$`Job Loyalty`), xlab = 'Job Loyalty', y = as.numeric(surveydata$`Pride in Work`), ylab = 'Pride in Work')
+# A general trend upward with an increase in job loyalty coming along with an increase in pride in work, though the correlation is weak as some people can have high job loyalty even if they don't have a sense of pride
+
+# Second: Years Worked & Likelihood of Promotion
+plot(y = as.numeric(surveydata$`Years Worked`), ylab = 'Years Worked', x = as.numeric(surveydata$`Promotion Likelihood`), xlab = 'Promotion Likelihood') #(Order's reversed because the original wasn't as nice-looking)
+# The likelihood of a promotion doesn't seem to correlate too strongly with the amount of years worked, though there's a v-shaped trend: This means people working for long are either still moving up the corporate ladder, or slightly more static in their already-promoted position.
+
+# Third: Satisfaction & Important Decisions
+plot(x = as.numeric(surveydata$Satisfaction), xlab = 'Work Satisfaction', y = as.numeric(surveydata$`Important Decisions`), ylab = 'Important Decision Frequency')
+# It seems that people don't really care on whether or not they get to make important decisions as this graph is essentially a filled grid.
+
+```
